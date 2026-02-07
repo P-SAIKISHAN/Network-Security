@@ -4,7 +4,8 @@ numpy
 pymongo>=4.0
 certifi
 dnspython
-
+dill
+pyaml
 ##-e .
 
 
