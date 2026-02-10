@@ -5,7 +5,12 @@ pymongo>=4.0
 certifi
 dnspython
 dill
+mlflow
+dagshub
 pyaml
+fastapi
+uvicorn
+scikit-learn
+
+
 ##-e .
-
-
