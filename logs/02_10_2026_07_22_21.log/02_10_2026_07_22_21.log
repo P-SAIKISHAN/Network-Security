@@ -1,0 +1,13 @@
+[ 2026-02-10 07:22:22,052 ] 148 numexpr.utils - INFO - Note: NumExpr detected 16 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+[ 2026-02-10 07:22:22,052 ] 160 numexpr.utils - INFO - NumExpr defaulting to 8 threads.
+[ 2026-02-10 07:22:30,765 ] 1026 httpx - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+[ 2026-02-10 07:22:30,776 ] 107 dagshub - INFO - Accessing as saikishan2452003
+[ 2026-02-10 07:22:32,353 ] 1026 httpx - INFO - HTTP Request: GET https://dagshub.com/api/v1/repos/saikishan2452003/Network-Security "HTTP/1.1 200 OK"
+[ 2026-02-10 07:22:33,967 ] 1026 httpx - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+[ 2026-02-10 07:22:33,970 ] 107 dagshub - INFO - Initialized MLflow to track repo "saikishan2452003/Network-Security"
+[ 2026-02-10 07:22:33,971 ] 107 dagshub - INFO - Repository saikishan2452003/Network-Security initialized!
+[ 2026-02-10 07:22:35,327 ] 108 fastapi - ERROR - Form data requires "python-multipart" to be installed. 
+You can install "python-multipart" with: 
+
+pip install python-multipart
+
