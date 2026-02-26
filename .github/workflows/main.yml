@@ -70,7 +70,8 @@ jobs:
       - name: Free Disk Space
         run: |
           sudo apt-get clean
-          sudo apt-get autoremove -y
+          sudo apt --fix-broken install -y || true
+          sudo apt-get autoremove -y || true
           docker system prune -af --volumes
           rm -rf /home/ubuntu/actions-runner/actions-runner/_diag/*.log
 
