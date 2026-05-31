@@ -6,8 +6,12 @@ ca = certifi.where()
 
 from dotenv import load_dotenv
 load_dotenv()
-mongo_db_url = os.getenv("MONGODB_URL_KEY")
-print(mongo_db_url)
+mongo_db_url = os.getenv("MONGODB_URL_KEY") or os.getenv("MONGO_DB_URL")
+if not mongo_db_url:
+    logging.warning("MongoDB connection URL is not set in environment variables!")
+    print("Warning: MongoDB connection URL is not set.")
+else:
+    print("MongoDB URL found and loaded successfully.")
 import pymongo
 from networksecurity.exception.exception import NetworkSecurityException
 from networksecurity.logging.logger import logging
@@ -16,7 +20,7 @@ from networksecurity.pipeline.training_pipeline import TrainingPipeline
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, File, UploadFile, Request
 from uvicorn import run as app_run
-from fastapi.responses import Response
+from fastapi.responses import Response, FileResponse
 from starlette.responses import RedirectResponse
 import pandas as pd
 
@@ -46,9 +50,16 @@ app.add_middleware(
 from fastapi.templating import Jinja2Templates
 templates = Jinja2Templates(directory="./templates")
 
-@app.get("/", tags=["authentication"])
-async def index():
-    return RedirectResponse(url="/docs")
+@app.get("/", tags=["frontend"])
+async def index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/download", tags=["frontend"])
+async def download_predictions():
+    file_path = "prediction_output/output.csv"
+    if os.path.exists(file_path):
+        return FileResponse(path=file_path, filename="predicted_network_security_data.csv", media_type="text/csv")
+    return Response("Prediction file not found. Please upload and predict first.", status_code=404)
 
 @app.get("/train")
 async def train_route():
@@ -125,12 +136,26 @@ async def predict_route(request: Request, file: UploadFile = File(...)):
         # Generate HTML table for display
         table_html = df.to_html(classes='table table-striped', index=False)
         
-        # Return template with table
-        return templates.TemplateResponse("table.html", {"request": request, "table": table_html})
+        # Calculate dashboard metrics
+        total_records = len(df)
+        legitimate_count = int((df['predicted_column'] == 1).sum())
+        phishing_count = int((df['predicted_column'] != 1).sum())
+        phishing_ratio = round((phishing_count / total_records) * 100, 1) if total_records > 0 else 0
+        
+        # Return template with table and dashboard stats
+        return templates.TemplateResponse("table.html", {
+            "request": request,
+            "table": table_html,
+            "total_records": total_records,
+            "legitimate_count": legitimate_count,
+            "phishing_count": phishing_count,
+            "phishing_ratio": phishing_ratio
+        })
         
     except Exception as e:
         raise NetworkSecurityException(e, sys)
 
     
 if __name__ == "__main__":
-    app_run(app, host="0.0.0.0", port=8000)
+    port = int(os.getenv("PORT", 8000))
+    app_run(app, host="0.0.0.0", port=port)
