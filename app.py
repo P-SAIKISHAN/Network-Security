@@ -1,5 +1,6 @@
 import sys
 import os
+import logging
 
 import certifi
 ca = certifi.where()
